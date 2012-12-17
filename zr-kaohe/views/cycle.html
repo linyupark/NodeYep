@@ -1,0 +1,31 @@
+{% extends 'layout/base.html' %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+{% endblock %}
+
+{% block body %}
+<div class="container">
+<div class="row">
+	<div class="span6">
+		<h1>周期列表</h1>
+		<form method="post" action="">
+			<p>新周期名称
+				<input type="text" name="name" value="">
+			</p>
+			<p>
+				<input type="submit" value="提交">
+			</p>
+		</form>
+	</div>
+	<div class="span6">
+		<h2>列表</h2>
+		<ul>
+			{% for cycle in cycle_list %}
+			<li><a href="">{{ cycle.name }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+</div>
+{% endblock %}

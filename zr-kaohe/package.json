@@ -1,0 +1,21 @@
+{
+  "name": "zr-kaohe",
+  "version": "0.0.1",
+  "description": "ERROR: No README.md file found!",
+  "main": "app.coffee",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "author": "linyupark@gmail.com",
+  "license": "BSD",
+  "dependencies": {
+    "express": "3.0.4",
+    "less-middleware": "*",
+    "swig": "*",
+    "consolidate": "*",
+    "sequelize": "*",
+    "sqlite3": "*"
+  }
+}

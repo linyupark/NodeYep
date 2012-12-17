@@ -1,0 +1,17 @@
+{% extends 'layout/base.html' %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+{% endblock %}
+
+{% block body %}
+<h1>Hi!</h1>
+<form method="post">
+	<p>姓名
+		<input type="text" name="name" value="">
+	</p>
+	<p>
+		<input type="submit" value="提交">
+	</p>
+</form>
+{% endblock %}
