@@ -1,39 +1,24 @@
 models = require '../models'
 
-# 周期列表
-exports.main = (req, res, next) ->
-	context = {}
+exports.main = (req, res) ->
+	user = new models.User
+		name: 'linzi'
+		joinAt: new Date()
+		age: 21
 
-	# 删除
-	if req.param 'delete'
-		console.log '删除周期'
+	user.save (err, user) ->
+		if err 
+			console.log err
+		else
+			user.posts.create
+				title: 'test title'
+				content: '.........'
+				date: new Date()
+			, (err) ->
+				res.send user
+				if err then console.log err
 
-	# 添加
-	if req.param 'name'
-		models.Cycle.create
-			name: req.param 'name'
-		.success (cycle) ->
-			res.redirect '?tips=create-success'
-
-	# 列表
-	q = models.Cycle.findAll order: 'createdAt DESC'
-	q.success (cycle_list) ->
-		context.cycle_list = cycle_list
+	models.User.find 21, (err, u) ->
+		console.log u.posts
 
 	
-
-	
-	res.render 'cycle', context
-
-# 某周期详细
-exports.cycle = (req, res, next) ->
-
-
-
-exports.users = (req, res, next) ->
-	if req.body.name
-		models.Person.create
-			name: req.body.name
-		.success (person) ->
-			res.redirect ''
-	res.render 'index'

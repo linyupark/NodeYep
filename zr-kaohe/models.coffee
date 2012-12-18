@@ -1,25 +1,34 @@
-DB = require 'sequelize'
-conn = new DB '', '', '', 
-	dialect: 'sqlite'
-	storage: "#{__dirname}/data.sqlite"
+Schema = require('jugglingdb').Schema
+schema = new Schema 'sqlite3', database: 'D:/test.db'
 
-Person = conn.define 'person', 
-	name: DB.STRING
+Post = schema.define 'Post',
+	title: String
+	content: Schema.Text
+	date: Date
+	published: type: Boolean, default: no
 
-Score = conn.define 'score',
-	point: DB.INTEGER
+User = schema.define 'User',
+	name: String
+	joinAt: Date
+	age: Number
 
-Cycle = conn.define 'cycle',
-	name: DB.STRING
 
-# 关系
-Person.hasMany Score, as: 'score_list'
-Cycle.hasMany Person, as: 'person_list'
+schema.models.User
+schema.models.Post
+
+User.hasMany Post, as:'posts', foreignKey:'userId'
+Post.belongsTo User, as:'author', foreignKey:'userId'
+
+# 自动生成数据库的中间件
+migrateMiddleware = (req, res, next) ->
+	if req.query.automigrate is 'yes'
+		schema.automigrate()
+		console.log '数据库同步完毕...'
+		next()
+	else next()
 
 module.exports = 
-	DB: DB
-	conn: conn
+	User: User
+	Post: Post
+	migrateMiddleware: migrateMiddleware
 
-	Person: Person
-	Score: Score
-	Cycle: Cycle

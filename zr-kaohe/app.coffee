@@ -31,13 +31,6 @@ swig.init
 if app.get 'env' is 'development'
 	app.use express.errorHandler()
 
-# db
-models = require './models'
-models.conn.sync().success ->
-	console.log '数据库同步成功'
-.error (err) ->
-	console.error "数据库同步失败 #{err}"
-
 # route
 controllers = require './controllers'
 require('./route')(app, controllers)
@@ -46,4 +39,4 @@ require('./route')(app, controllers)
 http = require 'http'
 http.createServer(app)
 	.listen app.get('port'), ->
-		console.log "Express server listening on port(#{app.get('port')})"
+		console.log "HTTP服务启动端口: #{app.get('port')} ........"

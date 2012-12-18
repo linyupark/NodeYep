@@ -11,11 +11,12 @@
   "author": "linyupark@gmail.com",
   "license": "BSD",
   "dependencies": {
-    "express": "3.0.4",
+    "express": "*",
     "less-middleware": "*",
     "swig": "*",
     "consolidate": "*",
-    "sequelize": "*",
+    "jugglingdb": "*",
+    "jugglingdb-sqlite3": "*",
     "sqlite3": "*"
   }
 }
