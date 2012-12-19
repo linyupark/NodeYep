@@ -1,5 +1,8 @@
 models = require '../models'
 
+exports.test = (req, res) ->
+	res.send req.body.a
+
 exports.main = (req, res) ->
 	user = new models.User
 		name: 'linzi'
@@ -18,7 +21,7 @@ exports.main = (req, res) ->
 				res.send user
 				if err then console.log err
 
-	models.User.find 21, (err, u) ->
+	models.User.find 1, (err, u) ->
 		console.log u.posts
 
 	
