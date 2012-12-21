@@ -1,0 +1,148 @@
+{% extends 'layout/base.html' %}
+
+{% block head %}
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/moment.js"></script>
+<script src="/js/moment-cn.js"></script>
+<style type="text/css">
+#talks{
+	height: 600px;
+	overflow: auto;
+	border:1px solid #eee;
+}
+.post{
+	border-bottom: 1px solid #eee;
+	padding: 10px;
+	font-size: 14px;
+	color: #666;
+	text-shadow: 1px 1px 1px #ccc;
+	background: #f5f5f5;
+}
+.post strong{
+	color: #333;
+	margin-right: 10px;
+}
+.post small{
+	color: #ccc;
+	float: right;
+}
+.own{
+	color: #666;
+	background: none;
+}
+.private{
+	color: #B55300;
+	background: #FFFFCC;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<br />
+<br />
+<div class="container">
+	<div class="row">
+		<div class="span10">
+			<div id="system" class="alert alert-info">连接服务器中...</div>
+			<div id="talks"></div>
+		</div>
+		<div class="span2">
+			<h3>在线成员</h3>
+			<hr />
+			<ul id="onlines" class="nav nav-list"></ul>
+		</div>
+	</div>
+	<br />
+	<div class="row">
+		<div class="span12">
+			发送给：<select name="to" id="talkto" style="width: 100px;">
+				<option value="">所有人</option>
+			</select>
+			<input type="text" name="message" id="message" style="width:300px;">
+			<input onclick="sendMessage();" type="button" class="btn" value="发送 (ctrl+回车)">
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+var socket = io.connect();
+var insertAT = function(name){
+	if(name === '{{ name }}') return alert('亲，该吃药了~跟自己私聊？');
+	var option = $('#talkto option[value="'+name+'"]');
+	if(option.length == 0){
+		$('#talkto').append($('<option selected="selected" />').val(name).text(name));
+	}
+	option.attr('selected', 'selected');
+}
+var showMessage = function(msg, from){
+	var talk = $('<div class="post" />').html('<strong>'+from+'</strong>“'+msg+'”<small class="time" data-time="'+new Date().getTime()+'"></small>');
+	if(from === '我'){
+		talk.addClass('own');
+	}
+	if(from.indexOf('@') !== -1){
+		talk.addClass('private');
+	}
+	$('#talks').append(talk);
+	if(msg === $.trim($('#message').val())){
+		$('#message').val('');
+	}
+	var box = document.getElementById('talks');
+	box.scrollTop = box.scrollHeight;
+}
+var sendMessage = function(){
+	var message = $.trim($('#message').val());
+	var talkto = $('#talkto').val();
+	if(message === '') return alert('内容不能为空！');
+	if(talkto === ''){ // 所有人
+		socket.emit('public', message, function(isSend){
+			if(isSend){
+				showMessage(message, '我');
+			}
+		});
+	}
+	else{
+		socket.emit('private', talkto, message, function(isSend){
+			if(isSend){
+				showMessage(message, '我@'+talkto);
+			}
+		});
+	}
+}
+
+socket.on('system', function(data){
+	$('#system').text(data.msg);
+});
+socket.on('online users', function(data){
+	html = '';
+	for(i in data){
+		var me = '';
+		if(data[i] === '{{ name }}') me = '(我)';
+		html += '<li><a href="javascript:;" onclick=insertAT("'+data[i]+'")>'+data[i]+me+'</a></li>';
+	}
+	$('#onlines').html(html);
+});
+socket.on('public', function(name, msg){
+	showMessage(msg, name);
+});
+socket.on('private', function(name, msg){
+	showMessage(msg, name+'@我');
+});
+// ctrl+回车发送
+$('#message').bind('keydown', function(e){
+	if(e.ctrlKey && e.keyCode === 13){
+		sendMessage();
+	}
+});
+// 刷新时间
+var refreshTime = function(){
+	var times = $('.time');
+	if(times.length > 0){
+		times.each(function(){
+			$(this).text(moment($(this).data('time')).fromNow());
+		});
+	}
+	setTimeout(refreshTime, 1000);
+};
+refreshTime();
+</script>
+{% endblock %}

@@ -1,27 +1,14 @@
 models = require '../models'
 
-exports.test = (req, res) ->
-	res.send req.body.a
+# push data 聊天室
+exports.chat = (req, res) ->
+	res.render 'chat', name: req.session.name
 
-exports.main = (req, res) ->
-	user = new models.User
-		name: 'linzi'
-		joinAt: new Date()
-		age: 21
+exports.login = (req, res) ->
+	if req.body.name
+		req.session.name = req.body.name
+		res.redirect '/chat'
+	res.render 'login'
 
-	user.save (err, user) ->
-		if err 
-			console.log err
-		else
-			user.posts.create
-				title: 'test title'
-				content: '.........'
-				date: new Date()
-			, (err) ->
-				res.send user
-				if err then console.log err
-
-	models.User.find 1, (err, u) ->
-		console.log u.posts
 
 	
