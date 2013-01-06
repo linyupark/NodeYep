@@ -73,6 +73,7 @@ var insertAT = function(name){
 		$('#talkto').append($('<option selected="selected" />').val(name).text(name));
 	}
 	option.attr('selected', 'selected');
+	$('#message').focus();
 }
 var showMessage = function(msg, from){
 	var talk = $('<div class="post" />').html('<strong>'+from+'</strong>“'+msg+'”<small class="time" data-time="'+new Date().getTime()+'"></small>');
@@ -104,6 +105,8 @@ var sendMessage = function(){
 		socket.emit('private', talkto, message, function(isSend){
 			if(isSend){
 				showMessage(message, '我@'+talkto);
+			} else {
+				alert('我@'+talkto+'发送失败，可能对方已下线。');
 			}
 		});
 	}

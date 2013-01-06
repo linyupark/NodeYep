@@ -93,8 +93,11 @@ io.sockets.on 'connection', (socket) ->
 
 	# 私信
 	socket.on 'private', (to, msg, isSend) ->
-		users[to].emit 'private', username, msg
-		isSend yes
+		if users[to]
+			users[to].emit 'private', username, msg
+			isSend yes
+		else
+			isSend no
 
 	# 掉线
 	socket.on 'disconnect', ->
